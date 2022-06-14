@@ -21,6 +21,7 @@
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.16",
     "pg": "^8.7.3",
-    "string-strip-html": "^9.1.12"
+    "string-strip-html": "^9.1.12",
+    "url-metadata": "^2.5.0"
   }
 }
