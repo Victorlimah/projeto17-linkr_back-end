@@ -10,9 +10,10 @@ export function getPosts() {
     `)
 }
 
-export function postPosts() {
+export function postPosts(url, description) {
     return db.query(`
     INSERT INTO publications
-    
-    `)
+    (link, description)
+    VALUES ($1, $2)
+    `, [url, descripition])
 }
