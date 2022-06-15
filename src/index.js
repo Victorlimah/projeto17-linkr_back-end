@@ -7,7 +7,7 @@ import express, { json } from "express";
 const App = express();
 dotenv.config();
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5050;
 const MESSAGE = chalk.green(`Server is running on port ${PORT}`);
 
 App.use(json());

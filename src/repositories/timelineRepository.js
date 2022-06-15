@@ -2,18 +2,17 @@ import { db } from "./../data/db.js";
 
 export function getPosts() {
     return db.query(`
-    SELECT u.username AS name, u.picture AS picture
+    SELECT u.username AS username, u.picture AS picture, p.link, p.description
     FROM users AS u
-    JOIN publications ON publications."userId"=users.id
-    ORDER BY "createdAt"
-    DESC LIMIT 20
+    JOIN publications AS p ON p."userId"=u.id
+    LIMIT 20
     `)
 }
 
-export function postPosts(url, description) {
+export function postPosts(url, description, id) {
     return db.query(`
     INSERT INTO publications
-    (link, description)
-    VALUES ($1, $2)
-    `, [url, descripition])
+    (link, description, "userId")
+    VALUES ($1, $2, $3)
+    `, [url, description, id])
 }
