@@ -20,3 +20,14 @@ export function linkHashtags(postId, hashtagId) {
     `, [postId, hashtagId]
   );
 }
+
+export function getTrendingHashtags() {
+  return db.query(`
+    SELECT h.name, h.id, COUNT(h.id) AS quantity
+    FROM "publicationsHashtags" ph
+    JOIN hashtags h ON ph."hashtagId" = h.id
+    GROUP BY(H.ID)
+    ORDER BY quantity DESC
+    LIMIT 10
+  `)
+}
