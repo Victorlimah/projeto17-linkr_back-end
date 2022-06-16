@@ -12,26 +12,20 @@ export async function Timeline(req, res) {
     }
     try {
         const infos = await getPosts();
-        infos.rows.map(info => {
-            urlMetadata(info.link, options).then(
-                function (metadata) { // success handler
-                    console.log(metadata)
-                    const publicationsInfos = {
-                        username: info.username,
-                        picture: info.picture,
-                        link: info.link,
-                        description: info.description,
-                        linkPicture: metadata.title,
-                        linkTilte: metadata.title,
-                        linkDescription: metadata.description
-                }
-                postsArray.push(publicationsInfos)
-                },
-                function (error) { // failure handler
-                    console.log(error)
-                })
+        for(let info of infos.rows) {
+            const metadata = await urlMetadata(info.link, options)
+            const publicationsInfos = {
+                username: info.username,
+                picture: info.picture,
+                link: info.link,
+                description: info.description,
+                linkPicture: metadata.title,
+                linkTilte: metadata.title,
+                linkDescription: metadata.description
+            }
+            postsArray.push(publicationsInfos)
+        }
 
-        })
         res.status(201).send(postsArray)
     } catch (err) {
         console.log(chalk.red(`ERROR: ${err.message}`))
