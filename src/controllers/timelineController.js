@@ -2,6 +2,8 @@ import chalk from "chalk";
 import { getPosts, postPosts } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
+import { addHashtag } from "../services/addHashtag.js";
+import extractHashtags from "../utils/extractHashtags.js";
 
 dotenv.config();
 
@@ -38,7 +40,11 @@ export async function PostUrl(req, res) {
     id = Number(id);
 
     try {
-        await postPosts(url, description, id);
+        const post = await postPosts(url, description, id);
+        const hashtags = extractHashtags(description);
+        console.log(hashtags)
+        if (hashtags?.length > 0) 
+            await addHashtag(post.rows[0].id, hashtags);
         res.status(201).send("Url posted succesfully");
     } catch (err) {
         console.log(chalk.red(`ERROR on PostUrl: ${err.message}`))

@@ -19,7 +19,8 @@ export async function SignIn(_req, res){
 
         const dataToken = { id: user.rows[0].id, username: user.rows[0].username, picture: user.rows[0].picture };
 
-        let token = jwt.sign(dataToken, process.env.JWT_SECRET, {expiresIn: "1h"});
+        //TODO: Create a expiresIn variable to set the expiration time of the token
+        let token = jwt.sign(dataToken, process.env.JWT_SECRET);
         await insertToken(user.rows[0].id, token);
 
         return res.status(200).send({ token });

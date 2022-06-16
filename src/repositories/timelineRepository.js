@@ -13,6 +13,6 @@ export function postPosts(url, description, id) {
     return db.query(`
     INSERT INTO publications
     (link, description, "userId")
-    VALUES ($1, $2, $3)
+    VALUES ($1, $2, $3) RETURNING id
     `, [url, description, id])
 }
