@@ -5,6 +5,7 @@ export function getPosts() {
     SELECT u.username AS username, u.picture AS picture, p.link, p.description
     FROM users AS u
     JOIN publications AS p ON p."userId"=u.id
+    ORDER BY p.id DESC
     LIMIT 20
     `)
 }
