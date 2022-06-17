@@ -24,10 +24,11 @@ export function linkHashtags(postId, hashtagId) {
 
 export function getTrendingHashtags() {
   return db.query(`
-    SELECT h.name, h.id, COUNT(h.id) AS quantity
-    FROM "publicationsHashtags" ph
-    JOIN hashtags h ON ph."hashtagId" = h.id
-    GROUP BY(H.ID)
+    SELECT h.name, COUNT(h.name) AS quantity
+    FROM hashtags h
+    JOIN "publicationsHashtags" ph ON ph."hashtagId" = h.id
+    JOIN publications p ON p.id = ph."publicationId"
+    GROUP BY(H.name)
     ORDER BY quantity DESC
     LIMIT 10
   `)
