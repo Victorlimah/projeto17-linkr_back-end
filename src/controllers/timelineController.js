@@ -1,9 +1,10 @@
 import chalk from "chalk";
-import { getPosts, postPosts } from "../repositories/timelineRepository.js";
+import { getPosts, postPosts, postUsers } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
 import extractHashtags from "../utils/extractHashtags.js";
+import { db } from "../data/db.js";
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ export async function Timeline(req, res) {
     }
     try {
         const infos = await getPosts();
-        for(let info of infos.rows) {
+        for (let info of infos.rows) {
             const metadata = await urlMetadata(info.link, options)
             const publicationsInfos = {
                 username: info.username,
@@ -35,6 +36,21 @@ export async function Timeline(req, res) {
     }
 }
 
+export async function TimelineUsers(req, res) {
+
+    const { value } = req.body;
+
+    try {
+        if (value) {
+            const post = await postUsers(value);
+            res.status(200).send(post.rows);
+        }
+    } catch (err) {
+        console.log(chalk.red(`ERROR: ${err.message}`));
+        res.status(500).send(err.message);
+    }
+}
+
 export async function PostUrl(req, res) {
     let { url, description, id } = req.body;
     id = Number(id);
@@ -43,7 +59,7 @@ export async function PostUrl(req, res) {
         const post = await postPosts(url, description, id);
         const hashtags = extractHashtags(description);
         console.log(hashtags)
-        if (hashtags?.length > 0) 
+        if (hashtags?.length > 0)
             await addHashtag(post.rows[0].id, hashtags);
         res.status(201).send("Url posted succesfully");
     } catch (err) {
