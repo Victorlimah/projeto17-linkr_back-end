@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
 import extractHashtags from "../utils/extractHashtags.js";
+import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
 
 dotenv.config();
 
@@ -49,5 +50,18 @@ export async function PostUrl(req, res) {
     } catch (err) {
         console.log(chalk.red(`ERROR on PostUrl: ${err.message}`))
         res.status(500).send(`ERROR: ${err.message}`);
+    }
+}
+
+export async function getTrending(req, res) {
+    try {
+        const search = await getTrendingHashtags()
+        if(!search.rows) return res.sendStatus(404)
+
+        const hashtags = search.rows
+        res.status(200).send(hashtags)
+    } catch(e) {
+        console.log(e, "Error on getHashtags")
+        return res.sendStatus(500)
     }
 }
