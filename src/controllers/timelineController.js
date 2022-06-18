@@ -5,6 +5,7 @@ import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
 import extractHashtags from "../utils/extractHashtags.js";
 import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
+import { db } from "../data/db.js";
 
 dotenv.config();
 
@@ -92,6 +93,15 @@ export async function getTrending(req, res) {
         res.status(200).send(hashtags)
     } catch(e) {
         console.log(e, "Error on getHashtags")
+        return res.sendStatus(500)
+    }
+}
+
+export async function DeleteUserPost(req, res) {
+    try {
+        return res.sendStatus(200)
+    } catch(e) {
+        console.log(e, "Error on DeleteUserPost")
         return res.sendStatus(500)
     }
 }
