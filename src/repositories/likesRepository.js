@@ -17,3 +17,9 @@ export function unlike(postId, userName) {
     DELETE FROM likes WHERE "publicationId"=$1 AND "userName"=$2
   `, [postId, userName]);
 }
+
+export function countLikes(postId) {
+  return db.query(`
+    SELECT COUNT(*) FROM likes WHERE "publicationId"=$1
+  `, [postId]);
+}
