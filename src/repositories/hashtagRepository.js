@@ -1,4 +1,3 @@
-import { hash } from "bcrypt";
 import { db } from "./../data/db.js";
 
 export function getHashtag(param, value){

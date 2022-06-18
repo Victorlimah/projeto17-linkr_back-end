@@ -7,6 +7,6 @@ const timelineRouter = Router();
 
 timelineRouter.get("/timeline", Timeline);
 timelineRouter.post("/timeline-users", TimelineUsers);
-timelineRouter.post("/timeline",  validateSchemas(publishSchema), PostUrl);
+timelineRouter.post("/timeline", validateSchemas(publishSchema), PostUrl);
 
 export default timelineRouter

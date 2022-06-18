@@ -4,13 +4,11 @@ import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
 import extractHashtags from "../utils/extractHashtags.js";
-import { db } from "../data/db.js";
 import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
-
 
 dotenv.config();
 
-export async function Timeline(req, res) {
+export async function Timeline(_req, res) {
     const postsArray = []
     const options = {
         descriptionLength: 700
@@ -21,6 +19,7 @@ export async function Timeline(req, res) {
             try {
                 const response = await urlMetadata(info.link, options)
                 const publicationsInfos = {
+                    id: info.id,
                     username: info.username,
                     picture: info.picture,
                     link: info.link,
@@ -33,6 +32,7 @@ export async function Timeline(req, res) {
 
             } catch (e) {
                 const publicationsInfos = {
+                    id: info.id,
                     username: info.username,
                     picture: info.picture,
                     link: info.link,
