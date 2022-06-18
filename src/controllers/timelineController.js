@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getPosts, postPosts, postUsers } from "../repositories/timelineRepository.js";
+import { getPosts, getPostsUser, postPosts, postUsers } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
@@ -15,6 +15,51 @@ export async function Timeline(_req, res) {
     }
     try {
         const infos = await getPosts();
+        for (let info of infos.rows) {
+            try {
+                const response = await urlMetadata(info.link, options)
+                const publicationsInfos = {
+                    id: info.id,
+                    username: info.username,
+                    picture: info.picture,
+                    link: info.link,
+                    description: info.description,
+                    linkPicture: response.picture,
+                    linkTilte: response.title,
+                    linkDescription: response.description
+                }
+                postsArray.push(publicationsInfos)
+
+            } catch (e) {
+                const publicationsInfos = {
+                    id: info.id,
+                    username: info.username,
+                    picture: info.picture,
+                    link: info.link,
+                    description: info.description,
+                    linkPicture: undefined,
+                    linkTilte: undefined,
+                    linkDescription: undefined
+                }
+                postsArray.push(publicationsInfos)
+            }
+        }
+        res.status(200).send(postsArray)
+    } catch (err) {
+        console.log(chalk.red(`ERROR: ${err}`))
+        res.status(500).json(err)
+    }
+}
+
+export async function TimelineUser(req, res) {
+
+    const { id } = req.params;
+    const postsArray = []
+    const options = {
+        descriptionLength: 700
+    }
+    try {
+        const infos = await getPostsUser(id);
         for (let info of infos.rows) {
             try {
                 const response = await urlMetadata(info.link, options)
@@ -86,11 +131,11 @@ export async function PostUrl(req, res) {
 export async function getTrending(req, res) {
     try {
         const search = await getTrendingHashtags()
-        if(!search.rows) return res.sendStatus(404)
+        if (!search.rows) return res.sendStatus(404)
 
         const hashtags = search.rows
         res.status(200).send(hashtags)
-    } catch(e) {
+    } catch (e) {
         console.log(e, "Error on getHashtags")
         return res.sendStatus(500)
     }

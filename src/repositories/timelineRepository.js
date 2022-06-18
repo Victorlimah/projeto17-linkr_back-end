@@ -10,6 +10,17 @@ export function getPosts() {
     `)
 }
 
+export function getPostsUser(id) {
+    return db.query(`
+    SELECT p.id AS id, u.username AS username, u.picture AS picture, p.link, p.description
+    FROM users AS u
+    JOIN publications AS p ON p."userId"=u.id
+    WHERE u.id=$1
+    ORDER BY p.id DESC
+    LIMIT 20
+    `,[id])
+}
+
 export function postPosts(url, description, id) {
     return db.query(`
     INSERT INTO publications
@@ -19,7 +30,7 @@ export function postPosts(url, description, id) {
 }
 
 export function postUsers(value) {
-    return db.query(`SELECT users.username, users.picture 
+    return db.query(`SELECT users.username, users.picture, users.id 
     FROM users 
     WHERE UPPER(username) LIKE UPPER($1)`, [value + "%"])
 }
