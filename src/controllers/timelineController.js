@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getPosts, getPostsUser, postPosts, postUsers } from "../repositories/timelineRepository.js";
+import { getPosts, getPostsUser, getPublication, postPosts, postUsers } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
@@ -138,6 +138,19 @@ export async function getTrending(req, res) {
         res.status(200).send(hashtags)
     } catch (e) {
         console.log(e, "Error on getHashtags")
+        return res.sendStatus(500)
+    }
+}
+
+export async function getSpecificPublication(req, res) {
+    const {postId} = req.params
+    
+    try {
+        const search = await getPublication(postId)
+        console.log(search.rows)
+        return res.status(200).send(search.rows[0])
+    } catch (e) {
+        console.log(e, "Error on getSpecificPublication")
         return res.sendStatus(500)
     }
 }
