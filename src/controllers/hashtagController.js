@@ -17,8 +17,8 @@ export async function hashtagTimeline(req, res) {
                 picture: info.picture,
                 link: info.link,
                 description: info.description,
-                linkPicture: metadata.title,
-                linkTilte: metadata.title,
+                linkPicture: metadata.picture,
+                linkTitle: metadata.title,
                 linkDescription: metadata.description
             }
             postsArray.push(publicationsInfos)
@@ -26,7 +26,7 @@ export async function hashtagTimeline(req, res) {
 
         res.status(201).send(postsArray)
     } catch (err) {
-        console.log(chalk.red(`ERROR: ${err.message}`))
+        console.log(chalk.red(`ERROR on hashtagTimeline: ${err.message}`))
         res.status(500).send(err.message)
     }
 }
