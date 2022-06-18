@@ -2,7 +2,7 @@ import { db } from "./../data/db.js";
 
 export function getPosts() {
     return db.query(`
-    SELECT u.username AS username, u.picture AS picture, p.link, p.description
+    SELECT p.id AS id, u.username AS username, u.picture AS picture, p.link, p.description
     FROM users AS u
     JOIN publications AS p ON p."userId"=u.id
     ORDER BY p.id DESC

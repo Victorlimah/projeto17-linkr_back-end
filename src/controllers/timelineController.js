@@ -21,6 +21,7 @@ export async function Timeline(req, res) {
             try {
                 const response = await urlMetadata(info.link, options)
                 const publicationsInfos = {
+                    id: info.id,
                     username: info.username,
                     picture: info.picture,
                     link: info.link,
@@ -33,6 +34,7 @@ export async function Timeline(req, res) {
 
             } catch (e) {
                 const publicationsInfos = {
+                    id: info.id,
                     username: info.username,
                     picture: info.picture,
                     link: info.link,
