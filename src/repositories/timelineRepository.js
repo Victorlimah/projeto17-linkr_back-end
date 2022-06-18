@@ -18,7 +18,7 @@ export function postPosts(url, description, id) {
 }
 
 export function postUsers(value) {
-    return db.query(`SELECT users.username, users.picture 
+    return db.query(`SELECT users.username, users.picture, users.id 
     FROM users 
     WHERE UPPER(username) LIKE UPPER($1)`, [value + "%"])
 }
