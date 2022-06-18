@@ -23,3 +23,9 @@ export function countLikes(postId) {
     SELECT COUNT(*) FROM likes WHERE "publicationId"=$1
   `, [postId]);
 }
+
+export function getNames(postId, userName) {
+  return db.query(`
+    SELECT "userName" FROM likes WHERE "publicationId"=$1 AND "userName"<>$2 LIMIT 2
+  `, [postId, userName]);
+}
