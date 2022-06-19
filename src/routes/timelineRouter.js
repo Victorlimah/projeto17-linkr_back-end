@@ -12,6 +12,6 @@ timelineRouter.get("/user/:id", TimelineUser);
 timelineRouter.get("/publication/:postId", getSpecificPublication)
 timelineRouter.post("/timeline-users", TimelineUsers);
 timelineRouter.post("/timeline", validateSchemas(publishSchema), PostUrl);
-timelineRouter.delete("/delete-post", validateSchemas(deletePostSchema), DeleteUserPost)
+timelineRouter.delete("/delete-post", DeleteUserPost)
 
 export default timelineRouter
