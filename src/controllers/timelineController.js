@@ -158,7 +158,6 @@ export async function getSpecificPublication(req, res) {
     
     try {
         const search = await getPublication(postId)
-        console.log(search.rows)
         return res.status(200).send(search.rows[0])
     } catch (e) {
         console.log(e, "Error on getSpecificPublication")
