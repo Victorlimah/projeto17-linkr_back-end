@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser } from "../repositories/timelineRepository.js";
+import { getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser, deletePublication } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
@@ -167,7 +167,11 @@ export async function getSpecificPublication(req, res) {
 }
 
 export async function DeleteUserPost(req, res) {
+    const post = Number(req.headers.publicationid)
+    if(!post) return res.sendStatus(422)
+
     try {
+        await deletePublication(post)
         return res.sendStatus(200)
     } catch(e) {
         console.log(e, "Error on DeleteUserPost")
