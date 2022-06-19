@@ -13,6 +13,7 @@ export async function hashtagTimeline(req, res) {
         for(let info of infos.rows) {
             const metadata = await urlMetadata(info.link, options)
             const publicationsInfos = {
+                id: info.id,
                 username: info.username,
                 picture: info.picture,
                 link: info.link,

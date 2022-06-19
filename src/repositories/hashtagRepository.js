@@ -6,10 +6,10 @@ export function getHashtag(param, value){
     `, [value])
 }
 
-export function insertHashtags(hashtag){
+export function insertHashtags(hashtag, postId){
     return db.query(`
-    INSERT INTO hashtags (name) VALUES ($1) RETURNING *
-    `, [hashtag.toLowerCase()])  
+    INSERT INTO hashtags (name, "publicationId") VALUES ($1, $2) RETURNING *
+    `, [hashtag.toLowerCase(), postId])  
 }
 
 export function linkHashtags(postId, hashtagId) {
@@ -37,7 +37,7 @@ export function getTimelineByHashtag(hashtag) {
   hashtag = '#' + hashtag.hashtag
 
   return db.query(`
-  SELECT u.username AS username, u.picture AS picture, p.link, p.description
+  SELECT p.id, u.username AS username, u.picture AS picture, p.link, p.description
   FROM users u
   JOIN publications p ON p."userId" = u.id 
   JOIN "publicationsHashtags" ph ON ph."publicationId"=p.id

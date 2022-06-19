@@ -5,7 +5,7 @@ export async function addHashtag(postId, arrayHashtag) {
     for (let hashtag of arrayHashtag) {
       const hashtags = await getHashtag("name", arrayHashtag);
       if (hashtags.rows.length === 0) {
-        const insertionHashtag = await insertHashtags(hashtag);
+        const insertionHashtag = await insertHashtags(hashtag, postId);
         const hashtagId = insertionHashtag.rows[0].id;
         await linkHashtags(postId, hashtagId);
       } else {
