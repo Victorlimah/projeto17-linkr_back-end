@@ -21,6 +21,14 @@ export function getPostsUser(id) {
     `,[id])
 }
 
+export function getInfoUser(id) {
+    return db.query(`
+    SELECT u.username AS username, u.picture AS picture
+    FROM users AS u
+    WHERE u.id=$1
+    `,[id])
+}
+
 export function postPosts(url, description, id) {
     return db.query(`
     INSERT INTO publications
