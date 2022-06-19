@@ -26,7 +26,7 @@ export async function Timeline(_req, res) {
                     link: info.link,
                     description: info.description,
                     linkPicture: response.picture,
-                    linkTilte: response.title,
+                    linkTitle: response.title,
                     linkDescription: response.description
                 }
                 postsArray.push(publicationsInfos)
@@ -39,7 +39,7 @@ export async function Timeline(_req, res) {
                     link: info.link,
                     description: info.description,
                     linkPicture: undefined,
-                    linkTilte: undefined,
+                    linkTitle: undefined,
                     linkDescription: undefined
                 }
                 postsArray.push(publicationsInfos)
