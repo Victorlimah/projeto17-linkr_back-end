@@ -42,3 +42,11 @@ export function postUsers(value) {
     FROM users 
     WHERE UPPER(username) LIKE UPPER($1)`, [value + "%"])
 }
+
+export function getPublication(postId) {
+    return db.query(`SELECT p."userId" 
+    FROM publications p
+    WHERE p.id = $1
+    LIMIT 1
+    `, [postId])
+}
