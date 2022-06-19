@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getPosts, getPostsUser, postPosts, postUsers } from "../repositories/timelineRepository.js";
+import { getPosts, getPostsUser, postPosts, postUsers, getInfoUser } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
@@ -55,41 +55,52 @@ export async function TimelineUser(req, res) {
 
     const { id } = req.params;
     const postsArray = []
+    const array = [];
     const options = {
         descriptionLength: 700
     }
     try {
         const infos = await getPostsUser(id);
-        for (let info of infos.rows) {
-            try {
-                const response = await urlMetadata(info.link, options)
-                const publicationsInfos = {
-                    id: info.id,
-                    username: info.username,
-                    picture: info.picture,
-                    link: info.link,
-                    description: info.description,
-                    linkPicture: response.picture,
-                    linkTilte: response.title,
-                    linkDescription: response.description
-                }
-                postsArray.push(publicationsInfos)
+        const infoUser = await getInfoUser(id);
 
-            } catch (e) {
-                const publicationsInfos = {
-                    id: info.id,
-                    username: info.username,
-                    picture: info.picture,
-                    link: info.link,
-                    description: info.description,
-                    linkPicture: undefined,
-                    linkTilte: undefined,
-                    linkDescription: undefined
+        if (infos.rows.length !== 0) {
+            for (let info of infos.rows) {
+                try {
+                    const response = await urlMetadata(info.link, options)
+                    const publicationsInfos = {
+                        id: info.id,
+                        username: info.username,
+                        picture: info.picture,
+                        link: info.link,
+                        description: info.description,
+                        linkPicture: response.picture,
+                        linkTilte: response.title,
+                        linkDescription: response.description
+                    }
+                    postsArray.push(publicationsInfos)
+
+                } catch (e) {
+                    const publicationsInfos = {
+                        id: info.id,
+                        username: info.username,
+                        picture: info.picture,
+                        link: info.link,
+                        description: info.description,
+                        linkPicture: undefined,
+                        linkTilte: undefined,
+                        linkDescription: undefined
+                    }
+                    postsArray.push(publicationsInfos)
                 }
-                postsArray.push(publicationsInfos)
             }
+            array.push(infoUser.rows);
+            array.push(postsArray);
+            res.status(200).send(array);
+        } else if (infos.rows.length === 0 && infoUser.rows.length !== 0) {
+            res.status(200).send(infoUser.rows);
+        }else{
+            res.send();
         }
-        res.status(200).send(postsArray)
     } catch (err) {
         console.log(chalk.red(`ERROR: ${err}`))
         res.status(500).json(err)
