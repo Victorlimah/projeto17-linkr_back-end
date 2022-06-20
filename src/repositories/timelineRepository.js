@@ -54,3 +54,11 @@ export function getPublication(postId) {
 export function deletePublication(postId) {
     return db.query(`DELETE FROM publications p WHERE p.id = $1`, [postId])
 }
+
+export function updatePublication(postId, description){
+    return db.query(`
+    UPDATE publications p
+    SET description=$1
+    WHERE p.id=$2
+    `, [description, postId])
+}

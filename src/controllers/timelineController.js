@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser, deletePublication } from "../repositories/timelineRepository.js";
+import { getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser, deletePublication, updatePublication } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
@@ -58,7 +58,7 @@ export async function TimelineUser(req, res) {
     const postsArray = []
     const array = [];
     const options = {
-        descriptionLength: 700
+        descriptionLength: 200
     }
     try {
         const infos = await getPostsUser(id);
@@ -175,5 +175,21 @@ export async function DeleteUserPost(req, res) {
     } catch(e) {
         console.log(e, "Error on DeleteUserPost")
         return res.sendStatus(500)
+    }
+}
+
+export async function PutPost(req, res) {
+    const post = Number(req.headers.publicationid)
+    console.log(post)
+    const { description } = req.body
+    console.log(description)
+    if(!post) return res.sendStatus(422);
+
+    try {
+        await updatePublication(post, description)
+        return res.sendStatus(200)
+    } catch(err) {
+        console.log(chalk.red(`ERROR: ${err}`))
+        return res.status(500).json(err)
     }
 }
