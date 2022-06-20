@@ -6,7 +6,7 @@ export async function hashtagTimeline(req, res) {
     const hashtag = req.params
     const postsArray = []
     const options = {
-        descriptionLength: 750
+        descriptionLength: 200
     }
     try {
         const infos = await getTimelineByHashtag(hashtag);

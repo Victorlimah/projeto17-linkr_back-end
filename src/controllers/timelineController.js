@@ -12,7 +12,7 @@ dotenv.config();
 export async function Timeline(_req, res) {
     const postsArray = []
     const options = {
-        descriptionLength: 700
+        descriptionLength: 200
     }
     try {
         const infos = await getPosts();
