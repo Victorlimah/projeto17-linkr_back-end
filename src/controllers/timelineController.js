@@ -94,7 +94,7 @@ export async function TimelineUser(req, res) {
                     postsArray.push(publicationsInfos)
                 }
             }
-            array.push(infoUser.rows);
+            array.push(infoUser.rows[0]);
             array.push(postsArray);
             res.status(200).send(array);
         } else if (infos.rows.length === 0 && infoUser.rows.length !== 0) {
