@@ -180,9 +180,8 @@ export async function DeleteUserPost(req, res) {
 
 export async function PutPost(req, res) {
     const post = Number(req.headers.publicationid)
-    console.log(post)
     const { description } = req.body
-    console.log(description)
+
     if(!post) return res.sendStatus(422);
 
     try {
