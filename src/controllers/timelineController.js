@@ -27,7 +27,7 @@ export async function Timeline(_req, res) {
                     description: info.description,
                     originalPost: info.originalPost,
                     reposterName: info.reposterName,
-                    linkPicture: response.picture,
+                    linkPicture: response.image,
                     linkTitle: response.title,
                     linkDescription: response.description
                 }
@@ -138,7 +138,6 @@ export async function PostUrl(req, res) {
     try {
         const post = await postPosts(url, description, id);
         const hashtags = extractHashtags(description);
-        console.log(hashtags)
         if (hashtags?.length > 0)
             await addHashtag(post.rows[0].id, hashtags);
         res.status(201).send("Url posted succesfully");

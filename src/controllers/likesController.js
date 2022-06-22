@@ -1,14 +1,24 @@
 import chalk from "chalk";
+import { countComments } from "../repositories/commentsRepository.js";
 import { countLikes, getNames, insertLike, searchLike, unlike } from "../repositories/likesRepository.js";
+import { countReposts } from "../repositories/repostRepository.js";
 
 export async function checkLiked(req, res){
     let { postId, username } = req.body;
     postId = parseInt(postId);
     try{
-        const likes = await countLikes(postId);
+        const numberLikes = await countLikes(postId);
         const like = await searchLike(postId, username);
-        const names = await getNames(postId, username);
-        res.status(200).send({liked: like.rows.length > 0, likes: likes.rows[0].count, names: names.rows});
+        const allNames = await getNames(postId, username);
+        const numberComments = await countComments(postId);
+        const repostsAmount = await countReposts(postId);
+
+        const names = allNames.rows;
+        const likes = numberLikes.rows[0].count;
+        const comments = numberComments.rows[0].count;
+        const reposts = repostsAmount.rows[0].quantity;
+
+        res.status(200).send({liked: like.rows.length > 0, likes, comments, reposts, names});
     } catch(err){
         console.log(chalk.red(`ERROR CHECKING LIKE: ${err}`));
         res.status(500).send({error: err.message});
