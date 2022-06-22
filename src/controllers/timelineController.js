@@ -25,6 +25,8 @@ export async function Timeline(_req, res) {
                     picture: info.picture,
                     link: info.link,
                     description: info.description,
+                    originalPost: info.originalPost,
+                    reposterName: info.reposterName,
                     linkPicture: response.picture,
                     linkTitle: response.title,
                     linkDescription: response.description
@@ -38,6 +40,8 @@ export async function Timeline(_req, res) {
                     picture: info.picture,
                     link: info.link,
                     description: info.description,
+                    originalPost: info.originalPost,
+                    reposterName: info.reposterName,
                     linkPicture: undefined,
                     linkTitle: undefined,
                     linkDescription: undefined
@@ -74,6 +78,8 @@ export async function TimelineUser(req, res) {
                         picture: info.picture,
                         link: info.link,
                         description: info.description,
+                        originalPost: info.originalPost,
+                        reposterName: info.reposterName,
                         linkPicture: response.picture,
                         linkTilte: response.title,
                         linkDescription: response.description
@@ -87,6 +93,8 @@ export async function TimelineUser(req, res) {
                         picture: info.picture,
                         link: info.link,
                         description: info.description,
+                        originalPost: info.originalPost,
+                        reposterName: info.reposterName,
                         linkPicture: undefined,
                         linkTilte: undefined,
                         linkDescription: undefined

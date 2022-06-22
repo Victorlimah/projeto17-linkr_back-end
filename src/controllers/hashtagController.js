@@ -18,6 +18,8 @@ export async function hashtagTimeline(req, res) {
                 picture: info.picture,
                 link: info.link,
                 description: info.description,
+                originalPost: info.originalPost,
+                reposterName: info.reposterName,
                 linkPicture: metadata.picture,
                 linkTitle: metadata.title,
                 linkDescription: metadata.description

@@ -3,6 +3,7 @@ import { publishSchema } from "../schemas/timelineSchema.js";
 import { Timeline, PostUrl, TimelineUsers, TimelineUser, DeleteUserPost, getSpecificPublication, PutPost } from "../controllers/timelineController.js";
 import { validateSchemas } from "../middlewares/validateSchemas.js";
 import { verifyJWT } from "../utils/verifyJWT.js"
+import { repostSchema } from "../schemas/repostSchema.js";
 
 const timelineRouter = Router();
 

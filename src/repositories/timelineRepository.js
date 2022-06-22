@@ -2,7 +2,7 @@ import { db } from "./../data/db.js";
 
 export function getPosts() {
     return db.query(`
-    SELECT p.id AS id, u.username AS username, u.picture AS picture, p.link, p.description
+    SELECT p.id AS id, u.username AS username, u.picture AS picture, p.link, p.description, p."originalPost", p."reposterName"
     FROM users AS u
     JOIN publications AS p ON p."userId"=u.id
     ORDER BY p.id DESC
@@ -62,3 +62,4 @@ export function updatePublication(postId, description){
     WHERE p.id=$2
     `, [description, postId])
 }
+
