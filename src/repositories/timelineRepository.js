@@ -29,6 +29,18 @@ export function getInfoUser(id) {
     `,[id])
 }
 
+export function getFollowId(follower, following) {
+    return db.query(`
+    SELECT f.id
+    FROM follow AS f
+    JOIN users AS u1
+    ON f."followerId" = u1.id
+    JOIN users AS u2
+    ON f."followingId" = u2.id
+    WHERE u1.id=$1 AND u2.id=$2
+    `,[follower, following])
+}
+
 export function postPosts(url, description, id) {
     return db.query(`
     INSERT INTO publications

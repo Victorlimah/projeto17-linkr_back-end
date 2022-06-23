@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser, deletePublication, updatePublication } from "../repositories/timelineRepository.js";
+import { getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser, deletePublication, updatePublication, getFollowId } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
@@ -107,7 +107,7 @@ export async function TimelineUser(req, res) {
             res.status(200).send(array);
         } else if (infos.rows.length === 0 && infoUser.rows.length !== 0) {
             res.status(200).send(infoUser.rows);
-        }else{
+        } else {
             res.send();
         }
     } catch (err) {
@@ -148,6 +148,29 @@ export async function PostUrl(req, res) {
     }
 }
 
+export async function postFollow(req, res) {
+
+    const { follower, following } = req.body;
+
+    try {
+
+        if (Number(follower) !== Number(following)) {
+            const follow = await getFollowId(follower, following);
+
+            if (follow.rows.length !== 0) {
+                res.send(true);
+            } else {
+                res.send(false);
+            }
+        }
+
+        res.status(200);
+    } catch (err) {
+        console.log(chalk.red(`ERROR on postFollow: ${err.message}`))
+        res.status(500).send(`ERROR: ${err.message}`);
+    }
+}
+
 export async function getTrending(req, res) {
     try {
         const search = await getTrendingHashtags()
@@ -162,8 +185,8 @@ export async function getTrending(req, res) {
 }
 
 export async function getSpecificPublication(req, res) {
-    const {postId} = req.params
-    
+    const { postId } = req.params
+
     try {
         const search = await getPublication(postId)
         return res.status(200).send(search.rows[0])
@@ -175,12 +198,12 @@ export async function getSpecificPublication(req, res) {
 
 export async function DeleteUserPost(req, res) {
     const post = Number(req.headers.publicationid)
-    if(!post) return res.sendStatus(422)
+    if (!post) return res.sendStatus(422)
 
     try {
         await deletePublication(post)
         return res.sendStatus(200)
-    } catch(e) {
+    } catch (e) {
         console.log(e, "Error on DeleteUserPost")
         return res.sendStatus(500)
     }
@@ -190,12 +213,12 @@ export async function PutPost(req, res) {
     const post = Number(req.headers.publicationid)
     const { description } = req.body
 
-    if(!post) return res.sendStatus(422);
+    if (!post) return res.sendStatus(422);
 
     try {
         await updatePublication(post, description)
         return res.sendStatus(200)
-    } catch(err) {
+    } catch (err) {
         console.log(chalk.red(`ERROR: ${err}`))
         return res.status(500).json(err)
     }
