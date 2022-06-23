@@ -1,11 +1,13 @@
 import chalk from "chalk";
-import { getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser, deletePublication, updatePublication, getFollowId } from "../repositories/timelineRepository.js";
+import {
+    getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser, deletePublication,
+    updatePublication, getFollowId, postFollowing, deleteFollowing
+} from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
 import extractHashtags from "../utils/extractHashtags.js";
 import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
-import { db } from "../data/db.js";
 
 dotenv.config();
 
@@ -138,7 +140,6 @@ export async function PostUrl(req, res) {
     try {
         const post = await postPosts(url, description, id);
         const hashtags = extractHashtags(description);
-        console.log(hashtags)
         if (hashtags?.length > 0)
             await addHashtag(post.rows[0].id, hashtags);
         res.status(201).send("Url posted succesfully");
@@ -164,7 +165,29 @@ export async function postFollow(req, res) {
             }
         }
 
-        res.status(200);
+    } catch (err) {
+        console.log(chalk.red(`ERROR on postFollow: ${err.message}`))
+        res.status(500).send(`ERROR: ${err.message}`);
+    }
+}
+
+export async function postFollowUser(req, res) {
+
+    const { follower, following } = req.body;
+
+    try {
+
+        if (Number(follower) !== Number(following)) {
+            const follow = await getFollowId(follower, following);
+
+            if (follow.rows.length === 0) {
+                await postFollowing(follower, following);
+                res.status(201).send(true);
+            } else {
+                await deleteFollowing(follower, following);
+                res.status(201).send(false);
+            }
+        }
     } catch (err) {
         console.log(chalk.red(`ERROR on postFollow: ${err.message}`))
         res.status(500).send(`ERROR: ${err.message}`);

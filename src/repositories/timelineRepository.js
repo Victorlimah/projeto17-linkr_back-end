@@ -55,6 +55,11 @@ export function postUsers(value) {
     WHERE UPPER(username) LIKE UPPER($1)`, [value + "%"])
 }
 
+export function postFollowing(follower, following) {
+    return db.query(`INSERT INTO follow ("followerId", "followingId")
+    VALUES($1, $2)`, [follower, following])
+}
+
 export function getPublication(postId) {
     return db.query(`SELECT p."userId" 
     FROM publications p
@@ -67,6 +72,10 @@ export function deletePublication(postId) {
     return db.query(`DELETE FROM publications p WHERE p.id = $1`, [postId])
 }
 
+export function deleteFollowing(follower, following) {
+    return db.query(`DELETE FROM follow f WHERE f."followerId" = $1 AND f."followingId" = $2`, [follower, following])
+}
+
 export function updatePublication(postId, description){
     return db.query(`
     UPDATE publications p
@@ -74,4 +83,5 @@ export function updatePublication(postId, description){
     WHERE p.id=$2
     `, [description, postId])
 }
+
 
