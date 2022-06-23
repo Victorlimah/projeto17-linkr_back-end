@@ -73,17 +73,17 @@ export async function TimelineUser(req, res) {
                 try {
                     const response = await urlMetadata(info.link, options)
                     const publicationsInfos = {
-                        id: info.id,
-                        username: info.username,
-                        picture: info.picture,
-                        link: info.link,
-                        description: info.description,
-                        originalPost: info.originalPost,
-                        reposterName: info.reposterName,
-                        linkPicture: response.picture,
-                        linkTilte: response.title,
-                        linkDescription: response.description
-                    }
+                      id: info.id,
+                      username: info.username,
+                      picture: info.picture,
+                      link: info.link,
+                      description: info.description,
+                      originalPost: info.originalPost,
+                      reposterName: info.reposterName,
+                      linkPicture: response.image,
+                      linkTitle: response.title,
+                      linkDescription: response.description,
+                    };
                     postsArray.push(publicationsInfos)
 
                 } catch (e) {
