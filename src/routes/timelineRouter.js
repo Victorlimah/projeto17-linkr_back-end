@@ -10,7 +10,7 @@ import { repostSchema } from "../schemas/repostSchema.js";
 
 const timelineRouter = Router();
 
-timelineRouter.get("/timeline", Timeline);
+timelineRouter.get("/timeline/", Timeline);
 timelineRouter.get("/user/:id", TimelineUser);
 timelineRouter.get("/publication/:postId", getSpecificPublication)
 timelineRouter.post("/timeline-users", TimelineUsers);
