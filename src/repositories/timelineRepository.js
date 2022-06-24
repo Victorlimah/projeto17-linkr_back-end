@@ -10,7 +10,7 @@ import { db } from "./../data/db.js";
 //     `)
 // }
 
-export function getPosts() {
+export function getPosts(id) {
     return db.query(`
     SELECT p.id AS id, u2.username AS username, u2.picture AS picture, p.link, 
     p.description, p."originalPost", p."reposterName"
@@ -21,10 +21,10 @@ export function getPosts() {
     ON u2.id = f."followingId" 
     JOIN users AS u1
     ON u1.id = f."followerId"  
-    WHERE f."followerId"=19
+    WHERE f."followerId"=$1
     ORDER BY p.id DESC
     LIMIT 20
-    `)
+    `, [id])
 }
 
 export function getPostsUser(id) {
@@ -58,14 +58,14 @@ export function getFollowId(follower, following) {
     `, [follower, following])
 }
 
-export function verifyFollow() {
+export function verifyFollow(id) {
     return db.query(`
     SELECT f."followingId"
     FROM follow AS f
     JOIN users AS u
     ON f."followerId" = u.id
-    WHERE f."followerId"=19
-    `,)
+    WHERE f."followerId"=$1
+    `,[id])
 }
 
 export function postPosts(url, description, id) {

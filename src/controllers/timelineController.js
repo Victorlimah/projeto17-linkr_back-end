@@ -11,18 +11,22 @@ import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
 
 dotenv.config();
 
-export async function Timeline(_req, res) {
+export async function Timeline(req, res) {
+
+    let {id} = req.params;
+    id = Number(id);
 
     const postsArray = []
     const options = {
         descriptionLength: 200
     }
+    
     try {
 
-        const followSomeone = await verifyFollow();
+        const followSomeone = await verifyFollow(id);
         if(followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
 
-        const infos = await getPosts();
+        const infos = await getPosts(id);
         if(infos.rows.length === 0) return res.send("No posts found from your friends");
 
         for (let info of infos.rows) {
