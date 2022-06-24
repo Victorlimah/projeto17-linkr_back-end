@@ -13,21 +13,21 @@ dotenv.config();
 
 export async function Timeline(req, res) {
 
-    let {id} = req.params;
+    let { id } = req.params;
     id = Number(id);
 
     const postsArray = []
     const options = {
         descriptionLength: 200
     }
-    
+
     try {
 
         const followSomeone = await verifyFollow(id);
-        if(followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
+        if (followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
 
         const infos = await getPosts(id);
-        if(infos.rows.length === 0) return res.send("No posts found from your friends");
+        if (infos.rows.length === 0) return res.send("No posts found from your friends");
 
         for (let info of infos.rows) {
             try {
@@ -142,7 +142,7 @@ export async function TimelineUsers(req, res) {
                 array.push(user);
             }
         }
-       
+
         for (let user of post.rows) {
             if (!array.includes(user)) {
                 array.push(user);

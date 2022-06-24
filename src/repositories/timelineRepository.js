@@ -56,7 +56,7 @@ export function verifyFollow(id) {
     JOIN users AS u
     ON f."followerId" = u.id
     WHERE f."followerId"=$1
-    `,[id])
+    `, [id])
 }
 
 export function postPosts(url, description, id) {
