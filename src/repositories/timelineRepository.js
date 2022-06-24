@@ -74,7 +74,7 @@ export function postUsers(value) {
 }
 
 export function catchUsersFollow(value, id) {
-    return db.query(`SELECT u2.username, u2.picture, u2.id AS id, u1.id AS "followerId"
+    return db.query(`SELECT u2.username, u2.picture, u2.id AS id,  u1.id AS "followerId"
     FROM follow AS f
     JOIN users AS u1
     ON u1.id = f."followerId"  
