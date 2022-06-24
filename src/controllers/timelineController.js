@@ -13,21 +13,21 @@ dotenv.config();
 
 export async function Timeline(req, res) {
 
-    let {id} = req.params;
+    let { id } = req.params;
     id = Number(id);
 
     const postsArray = []
     const options = {
         descriptionLength: 200
     }
-    
+
     try {
 
         const followSomeone = await verifyFollow(id);
-        if(followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
+        if (followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
 
         const infos = await getPosts(id);
-        if(infos.rows.length === 0) return res.send("No posts found from your friends");
+        if (infos.rows.length === 0) return res.send("No posts found from your friends");
 
         for (let info of infos.rows) {
             try {
@@ -133,16 +133,41 @@ export async function TimelineUsers(req, res) {
 
     const { value, id } = req.body;
 
-    const array = [];
+    let array = [];
     let arrayLength = null;
-    const newArray = [];
-    const arr = [];
+    let arr = [];
+    
 
     try {
-        const post = await postUsers(value);
+        let post = await postUsers(value);
         const follow = await catchUsersFollow(value, id);
 
-        res.status(200).send(post.rows);
+        arrayLength = post.rows.length - follow.rows.length;
+
+        array.push(follow.rows);
+        arr.push(post.rows)
+        array.push([...arr.splice(arrayLength + 1, arrayLength)]);
+
+
+        // for (let i = 0; i < post.rows.length; i++) {
+        //     for (let j = 0; i < post.rows.length; j++) {
+        //         console.log(post.rows[i].username)
+        //         console.log(follow.rows[i].username)
+        //         if (post.rows[i].username === follow.rows[j].username) {
+        //             console.log("entrou")
+        //             array.push(post.rows[i]);
+        //             post.rows.splice(i, 1);
+        //         }
+        //     }
+        // }
+
+        // if (post.rows.length > 0) {
+        //     for (let i = 0; i < post.rows.length; i++) {
+        //         array.push(post.rows[i])
+        //     }
+        // }
+
+        res.status(200).send(array);
     } catch (err) {
         console.log(chalk.red(`ERROR: ${err.message}`));
         res.status(500).send(err.message);
