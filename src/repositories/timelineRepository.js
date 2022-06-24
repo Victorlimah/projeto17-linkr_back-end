@@ -1,15 +1,5 @@
 import { db } from "./../data/db.js";
 
-// export function getPosts() {
-//     return db.query(`
-//     SELECT p.id AS id, u.username AS username, u.picture AS picture, p.link, p.description, p."originalPost", p."reposterName"
-//     FROM users AS u
-//     JOIN publications AS p ON p."userId"=u.id
-//     ORDER BY p.id DESC
-//     LIMIT 20
-//     `)
-// }
-
 export function getPosts(id, page) {
     return db.query(`
     SELECT p.id AS id, u2.username AS username, u2.picture AS picture, p.link, 
@@ -21,7 +11,8 @@ export function getPosts(id, page) {
     ON u2.id = f."followingId" 
     JOIN users AS u1
     ON u1.id = f."followerId"  
-    WHERE f."followerId"=$1
+    WHERE f."followerId"=$1 AND p."originalPost" IS NULL
+    OR p."reposterName"=u2.username 
     ORDER BY p.id DESC
     LIMIT 10
     OFFSET $2
@@ -66,7 +57,7 @@ export function verifyFollow(id) {
     JOIN users AS u
     ON f."followerId" = u.id
     WHERE f."followerId"=$1
-    `,[id])
+    `, [id])
 }
 
 export function postPosts(url, description, id) {
@@ -84,7 +75,7 @@ export function postUsers(value) {
 }
 
 export function catchUsersFollow(value, id) {
-    return db.query(`SELECT u2.username, u2.picture, u2.id 
+    return db.query(`SELECT u2.username, u2.picture, u2.id AS id,  u1.id AS "followerId"
     FROM follow AS f
     JOIN users AS u1
     ON u1.id = f."followerId"  

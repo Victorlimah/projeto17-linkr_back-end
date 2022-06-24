@@ -21,10 +21,10 @@ export async function Timeline(req, res) {
     const options = {
         descriptionLength: 200
     }
-    
+
     try {
         const followSomeone = await verifyFollow(id);
-        if(followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
+        if (followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
 
         const infos = await getPosts(id, page);
         if(infos.rows.length === 0) return res.send("No posts found from your friends");
@@ -130,19 +130,34 @@ export async function TimelineUser(req, res) {
 }
 
 export async function TimelineUsers(req, res) {
-
     const { value, id } = req.body;
-
-    const array = [];
-    let arrayLength = null;
-    const newArray = [];
-    const arr = [];
+    let array = [];
 
     try {
         const post = await postUsers(value);
         const follow = await catchUsersFollow(value, id);
 
-        res.status(200).send(post.rows);
+        if (follow.rows.length !== 0) {
+            for (let user of follow.rows) {
+                array.push(user);
+            }
+        }
+
+        for (let user of post.rows) {
+            if (!array.includes(user)) {
+                array.push(user);
+            }
+        }
+
+        for (let i = 0; i < array.length; i++) {
+            for (let j = i + 1; j < array.length; j++) {
+                if (array[i].username === array[j].username) {
+                    array.splice(j, 1);
+                }
+            }
+        }
+
+        res.status(200).send(array);
     } catch (err) {
         console.log(chalk.red(`ERROR: ${err.message}`));
         res.status(500).send(err.message);
@@ -276,3 +291,4 @@ export async function Observer(req, res) {
     return res.status(500).json(err)
 }
 }
+
