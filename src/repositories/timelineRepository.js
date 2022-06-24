@@ -1,6 +1,6 @@
 import { db } from "./../data/db.js";
 
-export function getPosts(id) {
+export function getPosts(id, page) {
     return db.query(`
     SELECT p.id AS id, u2.username AS username, u2.picture AS picture, p.link, 
     p.description, p."originalPost", p."reposterName"
@@ -15,7 +15,8 @@ export function getPosts(id) {
     OR p."reposterName"=u2.username 
     ORDER BY p.id DESC
     LIMIT 10
-    `, [id])
+    OFFSET $2
+    `, [id, Number(page*10)])
 }
 
 export function getPostsUser(id) {
@@ -25,7 +26,7 @@ export function getPostsUser(id) {
     JOIN publications AS p ON p."userId"=u.id
     WHERE u.id=$1
     ORDER BY p.id DESC
-    LIMIT 20
+    LIMIT 10
     `, [id])
 }
 
@@ -111,6 +112,22 @@ export function updatePublication(postId, description) {
     SET description=$1
     WHERE p.id=$2
     `, [description, postId])
+}
+
+export function observeAPI(id) {
+    return db.query(`
+    SELECT p.id AS id, u2.username AS username, u2.picture AS picture, p.link, 
+    p.description, p."originalPost", p."reposterName"
+    FROM users AS u2
+    JOIN publications AS p 
+    ON p."userId"=u2.id
+    JOIN follow AS f
+    ON u2.id = f."followingId" 
+    JOIN users AS u1
+    ON u1.id = f."followerId"  
+    WHERE f."followerId"=$1
+    ORDER BY p.id DESC
+    `, [id])
 }
 
 
