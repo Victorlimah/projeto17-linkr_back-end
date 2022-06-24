@@ -130,19 +130,34 @@ export async function TimelineUser(req, res) {
 }
 
 export async function TimelineUsers(req, res) {
-
     const { value, id } = req.body;
-
-    const array = [];
-    let arrayLength = null;
-    const newArray = [];
-    const arr = [];
+    let array = [];
 
     try {
         const post = await postUsers(value);
         const follow = await catchUsersFollow(value, id);
 
-        res.status(200).send(post.rows);
+        if (follow.rows.length !== 0) {
+            for (let user of follow.rows) {
+                array.push(user);
+            }
+        }
+       
+        for (let user of post.rows) {
+            if (!array.includes(user)) {
+                array.push(user);
+            }
+        }
+
+        for (let i = 0; i < array.length; i++) {
+            for (let j = i + 1; j < array.length; j++) {
+                if (array[i].username === array[j].username) {
+                    array.splice(j, 1);
+                }
+            }
+        }
+
+        res.status(200).send(array);
     } catch (err) {
         console.log(chalk.red(`ERROR: ${err.message}`));
         res.status(500).send(err.message);
@@ -262,3 +277,4 @@ export async function PutPost(req, res) {
         return res.status(500).json(err)
     }
 }
+
