@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import {
     getPosts, getPostsUser, postPosts, postUsers, getPublication, getInfoUser, deletePublication,
-    updatePublication, getFollowId, postFollowing, deleteFollowing
+    updatePublication, getFollowId, postFollowing, deleteFollowing, catchUsersFollow, verifyFollow
 } from "../repositories/timelineRepository.js";
 import dotenv from "dotenv";
 import urlMetadata from "url-metadata";
@@ -12,12 +12,19 @@ import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
 dotenv.config();
 
 export async function Timeline(_req, res) {
+
     const postsArray = []
     const options = {
         descriptionLength: 200
     }
     try {
+
+        const followSomeone = await verifyFollow();
+        if(followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
+
         const infos = await getPosts();
+        if(infos.rows.length === 0) return res.send("No posts found from your friends");
+
         for (let info of infos.rows) {
             try {
                 const response = await urlMetadata(info.link, options)
@@ -75,16 +82,16 @@ export async function TimelineUser(req, res) {
                 try {
                     const response = await urlMetadata(info.link, options)
                     const publicationsInfos = {
-                      id: info.id,
-                      username: info.username,
-                      picture: info.picture,
-                      link: info.link,
-                      description: info.description,
-                      originalPost: info.originalPost,
-                      reposterName: info.reposterName,
-                      linkPicture: response.image,
-                      linkTitle: response.title,
-                      linkDescription: response.description,
+                        id: info.id,
+                        username: info.username,
+                        picture: info.picture,
+                        link: info.link,
+                        description: info.description,
+                        originalPost: info.originalPost,
+                        reposterName: info.reposterName,
+                        linkPicture: response.image,
+                        linkTitle: response.title,
+                        linkDescription: response.description,
                     };
                     postsArray.push(publicationsInfos)
 
@@ -120,13 +127,18 @@ export async function TimelineUser(req, res) {
 
 export async function TimelineUsers(req, res) {
 
-    const { value } = req.body;
+    const { value, id } = req.body;
+
+    const array = [];
+    let arrayLength = null;
+    const newArray = [];
+    const arr = [];
 
     try {
-        if (value) {
-            const post = await postUsers(value);
-            res.status(200).send(post.rows);
-        }
+        const post = await postUsers(value);
+        const follow = await catchUsersFollow(value, id);
+
+        res.status(200).send(post.rows);
     } catch (err) {
         console.log(chalk.red(`ERROR: ${err.message}`));
         res.status(500).send(err.message);
