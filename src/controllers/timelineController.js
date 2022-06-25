@@ -8,11 +8,11 @@ import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
 import extractHashtags from "../utils/extractHashtags.js";
 import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
+import { getFollowingById } from "../repositories/userRepository.js";
 
 dotenv.config();
 
 export async function Timeline(req, res) {
-     
     const { page } = req.query;
     let {id} = req.params;
     id = Number(id);
@@ -27,6 +27,7 @@ export async function Timeline(req, res) {
         if (followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
 
         const infos = await getPosts(id, page);
+        const following = (await getFollowingById(id)).rows;
         if(infos.rows.length === 0) return res.send("No posts found from your friends");
 
         for (let info of infos.rows) {
@@ -34,6 +35,7 @@ export async function Timeline(req, res) {
                 const response = await urlMetadata(info.link, options)
                 const publicationsInfos = {
                     id: info.id,
+                    publisher: info.publisher,
                     username: info.username,
                     picture: info.picture,
                     link: info.link,
@@ -44,11 +46,17 @@ export async function Timeline(req, res) {
                     linkTitle: response.title,
                     linkDescription: response.description
                 }
+                if(info.reposterName !== null) {
+                    if(!following.some(user => user.username === info.reposterName)) {
+                        continue;
+                    }
+                }
                 postsArray.push(publicationsInfos)
 
             } catch (e) {
                 const publicationsInfos = {
                     id: info.id,
+                    publisher: info.publisher,
                     username: info.username,
                     picture: info.picture,
                     link: info.link,
@@ -58,6 +66,11 @@ export async function Timeline(req, res) {
                     linkPicture: undefined,
                     linkTitle: undefined,
                     linkDescription: undefined
+                }
+                if(info.reposterName !== null) {
+                    if(!following.some(user => user.username === info.reposterName)) {
+                        continue;
+                    }
                 }
                 postsArray.push(publicationsInfos)
             }
