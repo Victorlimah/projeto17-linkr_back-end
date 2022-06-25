@@ -12,22 +12,22 @@ import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
 dotenv.config();
 
 export async function Timeline(req, res) {
-     
+
     const { page } = req.query;
-    let {id} = req.params;
+    let { id } = req.params;
     id = Number(id);
 
     const postsArray = []
     const options = {
         descriptionLength: 200
     }
-    
+
     try {
         const followSomeone = await verifyFollow(id);
-        if(followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
+        if (followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
 
         const infos = await getPosts(id, page);
-        if(infos.rows.length === 0) return res.send("No posts found from your friends");
+        if (infos.rows.length === 0) return res.send("No posts found from your friends");
 
         for (let info of infos.rows) {
             try {
@@ -71,6 +71,7 @@ export async function Timeline(req, res) {
 
 export async function TimelineUser(req, res) {
 
+    const { page } = req.query;
     const { id } = req.params;
     const postsArray = []
     const array = [];
@@ -78,7 +79,7 @@ export async function TimelineUser(req, res) {
         descriptionLength: 200
     }
     try {
-        const infos = await getPostsUser(Number(id));
+        const infos = await getPostsUser(id, page);
         const infoUser = await getInfoUser(Number(id));
 
         if (infos.rows.length !== 0) {
@@ -265,14 +266,13 @@ export async function PutPost(req, res) {
 
 export async function Observer(req, res) {
 
-    const {id}= req.params
-    console.log(id)
+    const { id } = req.params
     try {
         const infos = await observeAPI(id)
         res.status(200).send(infos.rows)
     }
- catch(err) {
-    console.log(chalk.red(`ERROR: ${err}`))
-    return res.status(500).json(err)
-}
+    catch (err) {
+        console.log(chalk.red(`ERROR: ${err}`))
+        return res.status(500).json(err)
+    }
 }

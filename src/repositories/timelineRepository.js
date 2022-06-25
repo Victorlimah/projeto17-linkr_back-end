@@ -1,15 +1,5 @@
 import { db } from "./../data/db.js";
 
-// export function getPosts() {
-//     return db.query(`
-//     SELECT p.id AS id, u.username AS username, u.picture AS picture, p.link, p.description, p."originalPost", p."reposterName"
-//     FROM users AS u
-//     JOIN publications AS p ON p."userId"=u.id
-//     ORDER BY p.id DESC
-//     LIMIT 20
-//     `)
-// }
-
 export function getPosts(id, page) {
     return db.query(`
     SELECT p.id AS id, u2.username AS username, u2.picture AS picture, p.link, 
@@ -28,7 +18,7 @@ export function getPosts(id, page) {
     `, [id, Number(page*10)])
 }
 
-export function getPostsUser(id) {
+export function getPostsUser(id, page) {
     return db.query(`
     SELECT p.id AS id, u.username AS username, u.picture AS picture, p.link, p.description
     FROM users AS u
@@ -36,7 +26,8 @@ export function getPostsUser(id) {
     WHERE u.id=$1
     ORDER BY p.id DESC
     LIMIT 10
-    `, [id])
+    OFFSET $2
+    `, [id, Number(page*10)])
 }
 
 export function getInfoUser(id) {
