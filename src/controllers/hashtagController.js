@@ -14,13 +14,14 @@ export async function hashtagTimeline(req, res) {
             const metadata = await urlMetadata(info.link, options)
             const publicationsInfos = {
                 id: info.id,
+                publisher: info.publisher,
                 username: info.username,
                 picture: info.picture,
                 link: info.link,
                 description: info.description,
                 originalPost: info.originalPost,
                 reposterName: info.reposterName,
-                linkPicture: metadata.picture,
+                linkPicture: metadata.image,
                 linkTitle: metadata.title,
                 linkDescription: metadata.description
             }

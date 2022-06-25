@@ -13,10 +13,9 @@ export function getPosts(id, page) {
   );
 }
 
-
 export function getPostsUser(id) {
     return db.query(`
-    SELECT p.id AS id, u.username AS username, u.picture AS picture, p.link, p.description
+    SELECT p.id AS id, u.id AS publisher, u.username AS username, u.picture AS picture, p.link, p.description
     FROM users AS u
     JOIN publications AS p ON p."userId"=u.id
     WHERE u.id=$1
