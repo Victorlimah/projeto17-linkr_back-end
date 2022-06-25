@@ -8,11 +8,11 @@ import urlMetadata from "url-metadata";
 import { addHashtag } from "../services/addHashtag.js";
 import extractHashtags from "../utils/extractHashtags.js";
 import { getTrendingHashtags } from "../repositories/hashtagRepository.js";
+import { getFollowingById } from "../repositories/userRepository.js";
 
 dotenv.config();
 
 export async function Timeline(req, res) {
-
     const { page } = req.query;
     let { id } = req.params;
     id = Number(id);
@@ -27,13 +27,16 @@ export async function Timeline(req, res) {
         if (followSomeone.rows.length === 0) return res.send("You don't follow anyone yet. Search for new friends!");
 
         const infos = await getPosts(id, page);
-        if (infos.rows.length === 0) return res.send("No posts found from your friends");
+
+        const following = (await getFollowingById(id)).rows;
+        if(infos.rows.length === 0) return res.send("No posts found from your friends");
 
         for (let info of infos.rows) {
             try {
                 const response = await urlMetadata(info.link, options)
                 const publicationsInfos = {
                     id: info.id,
+                    publisher: info.publisher,
                     username: info.username,
                     picture: info.picture,
                     link: info.link,
@@ -44,11 +47,17 @@ export async function Timeline(req, res) {
                     linkTitle: response.title,
                     linkDescription: response.description
                 }
+                if(info.reposterName !== null) {
+                    if(!following.some(user => user.username === info.reposterName)) {
+                        continue;
+                    }
+                }
                 postsArray.push(publicationsInfos)
 
             } catch (e) {
                 const publicationsInfos = {
                     id: info.id,
+                    publisher: info.publisher,
                     username: info.username,
                     picture: info.picture,
                     link: info.link,
@@ -58,6 +67,11 @@ export async function Timeline(req, res) {
                     linkPicture: undefined,
                     linkTitle: undefined,
                     linkDescription: undefined
+                }
+                if(info.reposterName !== null) {
+                    if(!following.some(user => user.username === info.reposterName)) {
+                        continue;
+                    }
                 }
                 postsArray.push(publicationsInfos)
             }
@@ -88,6 +102,7 @@ export async function TimelineUser(req, res) {
                     const response = await urlMetadata(info.link, options)
                     const publicationsInfos = {
                         id: info.id,
+                        publisher: info.publisher,
                         username: info.username,
                         picture: info.picture,
                         link: info.link,
@@ -131,19 +146,34 @@ export async function TimelineUser(req, res) {
 }
 
 export async function TimelineUsers(req, res) {
-
     const { value, id } = req.body;
-
-    const array = [];
-    let arrayLength = null;
-    const newArray = [];
-    const arr = [];
+    let array = [];
 
     try {
         const post = await postUsers(value);
         const follow = await catchUsersFollow(value, id);
 
-        res.status(200).send(post.rows);
+        if (follow.rows.length !== 0) {
+            for (let user of follow.rows) {
+                array.push(user);
+            }
+        }
+
+        for (let user of post.rows) {
+            if (!array.includes(user)) {
+                array.push(user);
+            }
+        }
+
+        for (let i = 0; i < array.length; i++) {
+            for (let j = i + 1; j < array.length; j++) {
+                if (array[i].username === array[j].username) {
+                    array.splice(j, 1);
+                }
+            }
+        }
+
+        res.status(200).send(array);
     } catch (err) {
         console.log(chalk.red(`ERROR: ${err.message}`));
         res.status(500).send(err.message);
@@ -167,19 +197,14 @@ export async function PostUrl(req, res) {
 }
 
 export async function postFollow(req, res) {
-
     const { follower, following } = req.body;
 
     try {
-
         if (Number(follower) !== Number(following)) {
             const follow = await getFollowId(follower, following);
 
-            if (follow.rows.length !== 0) {
-                res.send(true);
-            } else {
-                res.send(false);
-            }
+            if (follow.rows.length !== 0) res.send(true);
+            else res.send(false);     
         }
 
     } catch (err) {
@@ -189,11 +214,9 @@ export async function postFollow(req, res) {
 }
 
 export async function postFollowUser(req, res) {
-
     const { follower, following } = req.body;
 
     try {
-
         if (Number(follower) !== Number(following)) {
             const follow = await getFollowId(follower, following);
 
@@ -265,7 +288,6 @@ export async function PutPost(req, res) {
 }
 
 export async function Observer(req, res) {
-
     const { id } = req.params
     try {
         const infos = await observeAPI(id)
@@ -276,3 +298,4 @@ export async function Observer(req, res) {
         return res.status(500).json(err)
     }
 }
+

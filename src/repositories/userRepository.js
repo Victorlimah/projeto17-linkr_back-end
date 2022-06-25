@@ -11,3 +11,23 @@ export function newUser(username, email, password, picture) {
     [username, email, password, picture]
   );
 }
+
+export function getFollowing(username){
+  return db.query(`
+    SELECT u.username
+    FROM follow AS f
+    JOIN users AS u
+    ON u.id = f."followingId" 
+    WHERE f."followerId"=(SELECT id FROM users WHERE username=$1)
+  `, [username])
+}
+
+export function getFollowingById(id){
+  return db.query(`
+    SELECT u.username
+    FROM follow AS f
+    JOIN users AS u
+    ON u.id = f."followingId" 
+    WHERE f."followerId"=$1
+  `, [id])
+}
