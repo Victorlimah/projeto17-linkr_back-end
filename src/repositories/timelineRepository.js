@@ -13,7 +13,7 @@ export function getPosts(id, page) {
   );
 }
 
-export function getPostsUser(id) {
+export function getPostsUser(id, page) {
     return db.query(`
     SELECT p.id AS id, u.id AS publisher, u.username AS username, u.picture AS picture, p.link, p.description
     FROM users AS u
@@ -21,7 +21,8 @@ export function getPostsUser(id) {
     WHERE u.id=$1
     ORDER BY p.id DESC
     LIMIT 10
-    `, [id])
+    OFFSET $2
+    `, [id, Number(page*10)])
 }
 
 export function getInfoUser(id) {
