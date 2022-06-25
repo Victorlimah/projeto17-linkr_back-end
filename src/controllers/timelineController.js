@@ -100,6 +100,7 @@ export async function TimelineUser(req, res) {
                     const response = await urlMetadata(info.link, options)
                     const publicationsInfos = {
                         id: info.id,
+                        publisher: info.publisher,
                         username: info.username,
                         picture: info.picture,
                         link: info.link,
@@ -194,19 +195,14 @@ export async function PostUrl(req, res) {
 }
 
 export async function postFollow(req, res) {
-
     const { follower, following } = req.body;
 
     try {
-
         if (Number(follower) !== Number(following)) {
             const follow = await getFollowId(follower, following);
 
-            if (follow.rows.length !== 0) {
-                res.send(true);
-            } else {
-                res.send(false);
-            }
+            if (follow.rows.length !== 0) res.send(true);
+            else res.send(false);     
         }
 
     } catch (err) {
@@ -216,11 +212,9 @@ export async function postFollow(req, res) {
 }
 
 export async function postFollowUser(req, res) {
-
     const { follower, following } = req.body;
 
     try {
-
         if (Number(follower) !== Number(following)) {
             const follow = await getFollowId(follower, following);
 
@@ -294,7 +288,6 @@ export async function PutPost(req, res) {
 export async function Observer(req, res) {
 
     const {id}= req.params
-    console.log(id)
     try {
         const infos = await observeAPI(id)
         res.status(200).send(infos.rows)

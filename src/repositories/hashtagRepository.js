@@ -37,7 +37,7 @@ export function getTimelineByHashtag(hashtag) {
   hashtag = '#' + hashtag.hashtag
 
   return db.query(`
-  SELECT p.id, u.username AS username, u.picture AS picture, p.link, p.description
+  SELECT p.id, u.id AS publisher, u.username AS username, u.picture AS picture, p.link, p.description
   FROM users u
   JOIN publications p ON p."userId" = u.id 
   JOIN "publicationsHashtags" ph ON ph."publicationId"=p.id
